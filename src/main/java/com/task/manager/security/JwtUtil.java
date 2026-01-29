@@ -4,18 +4,24 @@ package com.task.manager.security;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.Claims;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.Map;
 import java.security.Key;
-
+@ConfigurationProperties
 @Component
 public class JwtUtil {
 
-    private final String SECRET = "supersecretkeysupersecretkeysupersecretkey345";
-    private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    private final String SECRET;
+    private final Key key;
 
+    public JwtUtil(@Value("${jwt.secret}") String SECRET) {
+        this.SECRET = SECRET;
+        this.key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    }
     public String generateToken(Long id, String username, String role){
         return Jwts.builder()
                 .setSubject(username)              // sub
