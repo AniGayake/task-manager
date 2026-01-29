@@ -53,6 +53,14 @@ public class TaskService {
 
     public void delete(Long id){
         LOGGER.info("Deleting task with id: {}", id);
+
+        if (!taskRepository.existsById(id)) {
+            LOGGER.error("Task not found for delete with id: {}", id);
+            throw new TaskNotFoundException(id);
+        }
+
         taskRepository.deleteById(id);
+        LOGGER.info("Task deleted successfully with id: {}", id);
     }
+
 }

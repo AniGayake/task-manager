@@ -1,7 +1,7 @@
 package com.task.manager.security;
 
 import com.task.manager.entity.User;
-import com.task.manager.exception.UserNotFoundException;
+import com.task.manager.exception.UserNotFoundExceptionTaskAPP;
 import com.task.manager.repository.UserRepository;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             throws UsernameNotFoundException {
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundExceptionTaskAPP("User not found"));
 
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),

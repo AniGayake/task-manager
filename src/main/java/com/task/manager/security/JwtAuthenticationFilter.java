@@ -2,8 +2,7 @@ package com.task.manager.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.task.manager.exception.ApiError;
-import com.task.manager.exception.InvalidJwtSignatureException;
-import com.task.manager.exception.UserNotFoundException;
+import com.task.manager.exception.UserNotFoundExceptionTaskAPP;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -53,7 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
-    }catch (UserNotFoundException ex) {
+    }catch (UserNotFoundExceptionTaskAPP ex) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
             response.setContentType("application/json");
 
@@ -65,6 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             );
 
             response.getWriter().write(new ObjectMapper().writeValueAsString(error));
+            return;
         } catch (SignatureException ex) {
 
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -78,6 +78,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             );
 
             response.getWriter().write(new ObjectMapper().writeValueAsString(error));
+            return;
         }
         filterChain.doFilter(request, response);
     }

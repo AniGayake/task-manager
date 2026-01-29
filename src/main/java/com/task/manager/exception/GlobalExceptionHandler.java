@@ -12,9 +12,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 public class GlobalExceptionHandler {
 
     // USER NOT FOUND
-    @ExceptionHandler(UserNotFoundException.class)
+    @ExceptionHandler(UserNotFoundExceptionTaskAPP.class)
     public ResponseEntity<ApiError> handleUserNotFound(
-            UserNotFoundException ex,
+            UserNotFoundExceptionTaskAPP ex,
             HttpServletRequest req) {
 
         ApiError error = new ApiError(

@@ -1,10 +1,9 @@
 package com.task.manager.service;
 
 import com.task.manager.entity.User;
-import com.task.manager.exception.UserNotFoundException;
+import com.task.manager.exception.UserNotFoundExceptionTaskAPP;
 import com.task.manager.repository.UserRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -32,7 +31,7 @@ public class UserService {
         return userRepository.findById(id)
                 .orElseThrow(() -> {
                     LOGGER.error("User not found for id: {}", id);
-                    return new UserNotFoundException(id);
+                    return new UserNotFoundExceptionTaskAPP(id);
                 });
     }
 
@@ -52,8 +51,16 @@ public class UserService {
 
     public void delete(Long id){
         LOGGER.info("Deleting user with id: {}", id);
+
+        if (!userRepository.existsById(id)) {
+            LOGGER.error("User not found for delete with id: {}", id);
+            throw new UserNotFoundExceptionTaskAPP(id);
+        }
+
         userRepository.deleteById(id);
+        LOGGER.info("User deleted successfully with id: {}", id);
     }
+
 
     public List<User> search(String name){
         LOGGER.info("Searching users with name: {}", name);
