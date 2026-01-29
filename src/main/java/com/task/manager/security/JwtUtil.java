@@ -13,7 +13,7 @@ import java.security.Key;
 @Component
 public class JwtUtil {
 
-    private final String SECRET = "supersecretkeysupersecretkeysupersecretkey123";
+    private final String SECRET = "supersecretkeysupersecretkeysupersecretkey345";
     private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
     public String generateToken(Long id, String username, String role){

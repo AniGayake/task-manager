@@ -1,7 +1,13 @@
 package com.task.manager.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.task.manager.exception.ApiError;
+import com.task.manager.exception.InvalidJwtSignatureException;
+import com.task.manager.exception.UserNotFoundException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,15 +31,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
+        try {
 
         String authHeader = request.getHeader("Authorization");
 
-        if(authHeader != null && authHeader.startsWith("Bearer ")){
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
 
             String token = authHeader.substring(7);
             String username = jwtUtil.extractUsername(token);
 
-            if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
                 UserDetails userDetails =
                         userDetailsService.loadUserByUsername(username);
@@ -46,7 +53,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
+    }catch (UserNotFoundException ex) {
+            response.setStatus(HttpStatus.NOT_FOUND.value());
+            response.setContentType("application/json");
 
+            ApiError error = new ApiError(
+                    HttpStatus.NOT_FOUND.value(),
+                    "USER_NOT_FOUND",
+                    ex.getMessage(),
+                    request.getRequestURI()
+            );
+
+            response.getWriter().write(new ObjectMapper().writeValueAsString(error));
+        } catch (SignatureException ex) {
+
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setContentType("application/json");
+
+            ApiError error = new ApiError(
+                    HttpStatus.UNAUTHORIZED.value(),
+                    "INVALID_JWT_SIGNATURE",
+                    "Invalid JWT signature. Token cannot be trusted.",
+                    request.getRequestURI()
+            );
+
+            response.getWriter().write(new ObjectMapper().writeValueAsString(error));
+        }
         filterChain.doFilter(request, response);
     }
 }

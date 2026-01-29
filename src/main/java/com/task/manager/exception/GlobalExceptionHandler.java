@@ -106,4 +106,18 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    @ExceptionHandler(InvalidJwtSignatureException.class)
+    public ResponseEntity<ApiError> handleInvalidJwtSignature(
+            InvalidJwtSignatureException ex,
+            HttpServletRequest req) {
+
+        ApiError error = new ApiError(
+                HttpStatus.UNAUTHORIZED.value(),
+                "INVALID_JWT_SIGNATURE",
+                ex.getMessage(),
+                req.getRequestURI()
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
 }
