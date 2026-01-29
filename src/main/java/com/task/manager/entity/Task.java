@@ -3,25 +3,29 @@ package com.task.manager.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "tasks")
 public class Task {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Title required")
     private String title;
+
     private String description;
+
+    @FutureOrPresent(message = "Due date must be today or future")
     private LocalDate dueDate;
 
-    @Enumerated(EnumType.STRING)
+    @NotBlank(message = "Status required")
     private TaskStatus status;
-
     @ManyToOne
-    @JoinColumn(name = "user_id")
     private User user;
 
     public Long getId() {

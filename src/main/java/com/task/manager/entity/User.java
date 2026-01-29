@@ -1,26 +1,31 @@
 package com.task.manager.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "users")
 public class User {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "Username required")
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @NotBlank(message = "Password required")
+    private String password;
+
+    @NotBlank(message = "Role required")
+    private String role;
 
     private String firstName;
     private String lastName;
     private LocalDate dateOfBirth;
-
-    @Column(unique = true, nullable = false)
-    private String username;
-
-    private String password;
-
-    @Column(nullable = false)
-    private String role; // USER / ADMIN
 
     public Long getId() {
         return id;
